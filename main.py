@@ -15,9 +15,8 @@ def get_random():
 
 def check_five_min():
     print("проверка начала функции")
-    if ((int(datetime.now().strftime('%M')) % 2) == 0):
+    if ((int(datetime.now().strftime('%M')) % 1) == 0):
         print("функция проверки работает")
-        time.sleep(120)
         info_cetus = get_data_about_cetus()
 
 
@@ -65,9 +64,8 @@ def check_five_min():
 
 def for_thr():
     try:
-        while True:
-            check_five_min()
-            time.sleep(2)
+        threading.Timer(120.0, for_thr).start()
+        check_five_min()
 
     except requests.exceptions.ReadTimeout:
         print("\n Переподключение к серверам ВК \n")
@@ -79,9 +77,7 @@ session_api = vk_session.get_api()
 longpoll = VkBotLongPoll(vk_session, 215538965)
 
 
-thr = threading.Thread(target=for_thr, name="thr-1")
-
-thr.start()
+for_thr()
 
 
 try:
