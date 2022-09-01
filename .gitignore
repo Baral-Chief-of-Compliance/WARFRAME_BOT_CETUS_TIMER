@@ -1,2 +1,6 @@
 venv/
 data.json
+.idea/
+__pycache__/
+Procfile/
+runtime.txt/
