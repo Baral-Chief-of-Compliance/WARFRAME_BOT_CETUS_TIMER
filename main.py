@@ -31,14 +31,14 @@ def check_five_min():
                 time_str = time_m[len(time_m)-1]
                 time_m = time_m[:len(time_m)-1]
 
-                if (int(time_m) <= 5 and time_str !='h'):
+                if (int(time_m) <= 1 and time_str !='h'):
                     for chat in list_of_chats:
                         vk_session.method('messages.send', {'chat_id': chat, 'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ ("+str(time_m)+" мин)", 'random_id': get_random()})
 
 
-            elif (len(time_cetus) == 1):
-                for chat in list_of_chats:
-                    vk_session.method('messages.send', {'chat_id': chat,'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ",'random_id': get_random()})
+            # elif (len(time_cetus) == 1):
+            #     for chat in list_of_chats:
+            #         vk_session.method('messages.send', {'chat_id': chat,'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ",'random_id': get_random()})
 
         else:
             time_cetus = info_cetus['timeLeft']
@@ -50,17 +50,20 @@ def check_five_min():
                 time_str = time_m[len(time_m)-1]
                 time_m = time_m[:len(time_m)-1]
 
-                if (int(time_m) <= 5 and time_str !='h'):
+                if (int(time_m) <= 1 and time_str !='h'):
                     for chat in list_of_chats:
                         vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" минут",'random_id': get_random()})
 
-                elif (len(time_cetus) == 1):
-                    for chat in list_of_chats:
-                        vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" МИНУТЫ", 'random_id': get_random()})
+                # elif (len(time_cetus) == 1):
+                #     for chat in list_of_chats:
+                #         vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" МИНУТЫ", 'random_id': get_random()})
 
 def for_thr():
     try:
         threading.Timer(120.0, for_thr).start()
+        thread_name = threading.current_thread().name
+        print(thread_name)
+        print(threading.active_count())
         check_five_min()
 
     except requests.exceptions.ReadTimeout:
@@ -73,9 +76,6 @@ session_api = vk_session.get_api()
 longpoll = VkBotLongPoll(vk_session, 215538965)
 
 
-for_thr()
-
-
 try:
     for event in longpoll.listen():
 
@@ -84,6 +84,9 @@ try:
 
             if event.from_chat:
                 if response == "настройка":
+
+                    for_thr()
+
                     if list_of_chats.count(event.chat_id) == 0:
                         list_of_chats.append(event.chat_id)
                         vk_session.method('messages.send',{'chat_id': event.chat_id, 'message': 'настройка произведена','random_id': get_random()})
@@ -91,10 +94,21 @@ try:
                         vk_session.method('messages.send',{'chat_id': event.chat_id, 'message': 'ваша беседа уже прошла настройку','random_id': get_random()})
 
                 elif response == "цетус":
+                    print(threading.active_count())
                     vk_session.method('messages.send', {'chat_id':event.chat_id, 'message': message_cetus(), 'random_id': get_random()})
 
                 elif response == "инфо":
-                    vk_session.method('messages.send',{'chat_id': event.chat_id, 'message': 'Привет, я бот, которого сделал жукич. \nКак мной пользоваться: \n1) напишите "настройка" чтобы настроить \n2) напишите "цетус" чтобы узнать время суток на Цетус', 'random_id': get_random()})
+                    vk_session.method('messages.send',{'chat_id': event.chat_id, 'message':
+                                                                                            'Привет, я бот, которого сделал жукич. '
+                                                                                            '\nКак мной пользоваться: '
+                                                                                            '\n1) напишите "настройка" чтобы настроить самостоятельные уведомления '
+                                                                                            '\n2) напишите "цетус" чтобы узнать время суток на Цетус',
+                                                                                            '\n3) напишите "ночной режим" чтобы выключить самостоятельные уведомления'
+                                                       'random_id': get_random()})
+
+                elif response == "ночной режим":
+                    list_of_chats.remove(event.chat_id)
+                    vk_session.method('messages.send', {'chat_id':event.chat_id, 'message': 'ночной режим включён', 'random_id': get_random()})
 
 
 except requests.exceptions.ReadTimeout:
