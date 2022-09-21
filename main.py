@@ -31,9 +31,10 @@ def check_five_min():
                 time_str = time_m[len(time_m)-1]
                 time_m = time_m[:len(time_m)-1]
 
-                if (int(time_m) <= 1 and time_str !='h'):
-                    for chat in list_of_chats:
-                        vk_session.method('messages.send', {'chat_id': chat, 'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ ("+str(time_m)+" мин)", 'random_id': get_random()})
+                if (int(time_m) <= 5 and time_str !='h'):
+                    return 'the night is cooming'
+                    # for chat in list_of_chats:
+                    #     vk_session.method('messages.send', {'chat_id': chat, 'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ ("+str(time_m)+" мин)", 'random_id': get_random()})
 
 
             # elif (len(time_cetus) == 1):
@@ -50,9 +51,10 @@ def check_five_min():
                 time_str = time_m[len(time_m)-1]
                 time_m = time_m[:len(time_m)-1]
 
-                if (int(time_m) <= 1 and time_str !='h'):
-                    for chat in list_of_chats:
-                        vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" минут",'random_id': get_random()})
+                if (int(time_m) <= 5 and time_str !='h'):
+                    return 'the day is cooming'
+                    # for chat in list_of_chats:
+                    #     vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" минут",'random_id': get_random()})
 
                 # elif (len(time_cetus) == 1):
                 #     for chat in list_of_chats:
@@ -60,11 +62,19 @@ def check_five_min():
 
 def for_thr():
     try:
-        threading.Timer(120.0, for_thr).start()
-        thread_name = threading.current_thread().name
-        print(thread_name)
-        print(threading.active_count())
-        check_five_min()
+        if check_five_min() == 'the night is cooming':
+            for chat in list_of_chats:
+                vk_session.method('messages.send', {'chat_id': chat, 'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ", 'random_id': get_random()})
+            threading.Timer(300.0, for_thr).start()
+
+        elif check_five_min() == 'the day is cooming':
+            for chat in list_of_chats:
+                vk_session.method('messages.send', {'chat_id': chat, 'message': "ЕБЛЯ ГЕЙДАЛОНОВ СКОРО ЗАКОНЧИТСя",'random_id': get_random()})
+            threading.Timer(300.0, for_thr).start()
+
+        else:
+            threading.Timer(120.0, for_thr).start()
+
 
     except requests.exceptions.ReadTimeout:
         print("\n Переподключение к серверам ВК \n")
@@ -99,11 +109,11 @@ try:
 
                 elif response == "инфо":
                     vk_session.method('messages.send',{'chat_id': event.chat_id, 'message':
-                                                                                            'Привет, я бот, которого сделал жукич. '
+                                                                                            'Привет, я бот, которого сделал жукич.'
                                                                                             '\nКак мной пользоваться: '
                                                                                             '\n1) напишите "настройка" чтобы настроить самостоятельные уведомления '
-                                                                                            '\n2) напишите "цетус" чтобы узнать время суток на Цетус',
-                                                                                            '\n3) напишите "ночной режим" чтобы выключить самостоятельные уведомления'
+                                                                                            '\n2) напишите "цетус" чтобы узнать время суток на Цетус'
+                                                                                            '\n3) напишите "ночной режим" чтобы выключить самостоятельные уведомления',
                                                        'random_id': get_random()})
 
                 elif response == "ночной режим":
