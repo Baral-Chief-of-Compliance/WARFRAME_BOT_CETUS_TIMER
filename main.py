@@ -1,10 +1,16 @@
 import vk_api, time, requests, threading, schedule, datetime
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-from config import API_token
 from translator import message_cetus
 from statusCetus import check_five_min
 from randomChatId import get_random
+import os
 
+
+def get_api_key():
+    return os.environ['API_KEY_SPARLEX']
+
+
+API_token = get_api_key()
 
 list_of_chats_in_notify = []
 list_of_chats_in_sleep = []
@@ -18,6 +24,7 @@ def chek_sleep():
 def chek_notify():
     for chat in list_of_chats_in_notify:
         vk_session.method('messages.send',{'chat_id': chat, 'message': "Не хотите ли включить ночной режим?", 'random_id': get_random()})
+
 
 def for_thr():
     try:
@@ -42,6 +49,7 @@ def for_thr():
 schedule.every().day.at('08:00').do(chek_sleep)
 schedule.every().day.at('00:00').do(chek_notify)
 
+
 def for_thr_schedule():
     try:
         schedule.run_pending()
@@ -50,7 +58,6 @@ def for_thr_schedule():
     except requests.exceptions.ReadTimeout:
         print("\n Переподключение к серверам ВК \n")
         time.sleep(3)
-
 
 
 vk_session = vk_api.VkApi(token=API_token)
