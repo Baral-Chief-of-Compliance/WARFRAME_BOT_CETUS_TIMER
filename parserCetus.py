@@ -11,18 +11,12 @@ def get_data_about_cetus():
 
     req = requests.get(url, headers)
     src = req.text
-    src
 
-    with open('data.json', "w", encoding="utf-8") as file:
-        file.write(src)
+    data_from_wf_hub = json.loads(src)
 
-    data_about_cetus = {}
-    with open('data.json', "r", encoding="utf-8") as file:
-        data_form_wf_hub = json.loads(file.read())
-        for key in data_form_wf_hub:
-            if (key == "cetusCycle"):
-                data_about_cetus = data_form_wf_hub[key]
-        # print(data['timestamp'])
+    for key in data_from_wf_hub:
+        if (key == "cetusCycle"):
+            data_about_cetus = data_from_wf_hub[key]
 
     return data_about_cetus
 

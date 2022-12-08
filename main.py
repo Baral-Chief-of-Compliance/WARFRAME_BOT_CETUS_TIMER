@@ -10,15 +10,66 @@ import logging
 from config import API_token
 from vkbottle.bot import Bot, Message
 
+list_of_chats_in_notify = []
+list_of_chats_in_sleep = []
 
 bot = Bot(token=API_token)
 bot.labeler.vbml_ignore_case = True
 
 
+@bot.on.message(text="инфо")
+async def info(message: Message):
+    await message.answer( 'Привет, я бот, которого сделал жукич.'
+                                                        '\nКак мной пользоваться: '
+                                                        '\n1) напишите "рассылка" чтобы настроить самостоятельные уведомления '
+                                                        '\n2) напишите "цетус" чтобы узнать время суток на Цетус'
+                                                        '\n3) напишите "ночной режим" чтобы выключить самостоятельные уведомления'
+                                                        '\n4) напишите "статус" чтобы проверить режим самостоятельных уведомлений'
+    )
+
+
 @bot.on.message(text="цетус")
 async def hi_handler(message: Message):
     users_info = await bot.api.users.get(message.from_id)
-    await message.answer("Пошел нахуй, {}".format(users_info[0].first_name))
+    await message.answer(message_cetus())
+
+
+@bot.on.message(text="рассылка")
+async def add_to_list_of_chats_in_notify(message: Message):
+    group_info = message.peer_id
+    if group_info in list_of_chats_in_sleep:
+            list_of_chats_in_sleep.remove(group_info)
+
+    if group_info in list_of_chats_in_notify:
+        await message.answer("Режим рассылки у вас уже включен")
+    else:
+        list_of_chats_in_notify.append(group_info)
+        await message.answer("Режим рассылки включен")
+
+
+@bot.on.message(text="ночной режим")
+async def add_to_list_of_chats_in_slee(message: Message):
+    group_info = message.peer_id
+    if group_info in list_of_chats_in_notify:
+        list_of_chats_in_notify.remove(group_info)
+
+    if group_info in list_of_chats_in_sleep:
+        await message.answer("Ночной режим у вас уже включен")
+    else:
+        list_of_chats_in_sleep.append(group_info)
+        await message.answer("Ночной режим включен")
+
+
+@bot.loop_wrapper.interval(seconds=120)
+async def notifications():
+
+    if check_five_min() == 'the night is cooming':
+        for chat in list_of_chats_in_notify:
+            await bot.api.messages.send(peer_id=chat, message="ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ", random_id=0)
+
+    elif check_five_min() == 'the day is cooming':
+        for chat in list_of_chats_in_notify:
+            await bot.api.messages.send(peer_id=chat, message="Ночь скоро закончится", random_id=0)
 
 bot.run_forever()
 
