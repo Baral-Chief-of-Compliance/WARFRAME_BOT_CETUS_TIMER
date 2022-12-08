@@ -19,7 +19,7 @@ def check_five_min():
                 time_m = time_m[:len(time_m)-1]
 
                 if (int(time_m) <= 5 and time_str !='h'):
-                    return 'the night is cooming'
+                    return 'night'
                     # for chat in list_of_chats:
                     #     vk_session.method('messages.send', {'chat_id': chat, 'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ ("+str(time_m)+" мин)", 'random_id': get_random()})
 
@@ -39,7 +39,7 @@ def check_five_min():
                 time_m = time_m[:len(time_m)-1]
 
                 if (int(time_m) <= 5 and time_str !='h'):
-                    return 'the day is cooming'
+                    return 'day'
                     # for chat in list_of_chats:
                     #     vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" минут",'random_id': get_random()})
 

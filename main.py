@@ -7,6 +7,8 @@ import os
 import asyncio
 from vkbottle import Keyboard, Text
 import logging
+
+
 from config import API_token
 from vkbottle.bot import Bot, Message
 
@@ -36,6 +38,7 @@ async def hi_handler(message: Message):
 
 @bot.on.message(text="рассылка")
 async def add_to_list_of_chats_in_notify(message: Message):
+
     group_info = message.peer_id
     if group_info in list_of_chats_in_sleep:
             list_of_chats_in_sleep.remove(group_info)
@@ -49,6 +52,7 @@ async def add_to_list_of_chats_in_notify(message: Message):
 
 @bot.on.message(text="ночной режим")
 async def add_to_list_of_chats_in_slee(message: Message):
+
     group_info = message.peer_id
     if group_info in list_of_chats_in_notify:
         list_of_chats_in_notify.remove(group_info)
@@ -60,16 +64,39 @@ async def add_to_list_of_chats_in_slee(message: Message):
         await message.answer("Ночной режим включен")
 
 
+@bot.on.message(text='статус')
+async def check_status(message: Message):
+    group_info = message.peer_id
+
+    if group_info in list_of_chats_in_notify:
+        await message.answer("Режим рассылки включен")
+    else:
+        await message.answer("Режим рассылки выключен")
+
+
 @bot.loop_wrapper.interval(seconds=120)
 async def notifications():
 
-    if check_five_min() == 'the night is cooming':
+    if check_five_min() == 'night':
         for chat in list_of_chats_in_notify:
             await bot.api.messages.send(peer_id=chat, message="ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ", random_id=0)
 
-    elif check_five_min() == 'the day is cooming':
+    elif check_five_min() == 'day':
         for chat in list_of_chats_in_notify:
             await bot.api.messages.send(peer_id=chat, message="Ночь скоро закончится", random_id=0)
+
+
+@bot.loop_wrapper.interval(hours=1)
+async def status_notification():
+    current_hour = datetime.datetime.now()
+    if current_hour.hour == 8:
+        for chat in list_of_chats_in_sleep:
+            await bot.api.messages.send(peer_id=chat, message="Не хотите ли включить рассылку?", random_id=0)
+
+    elif current_hour.hour == 23:
+        for chat in list_of_chats_in_notify:
+            await bot.api.messages.send(peer_id=chat, message="Не хотите ли выключить рассылку?", random_id=0)
+
 
 bot.run_forever()
 
