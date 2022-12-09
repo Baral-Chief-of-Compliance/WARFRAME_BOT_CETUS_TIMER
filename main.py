@@ -1,16 +1,12 @@
-import vk_api, time, requests, threading, schedule, datetime
-from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
+import datetime, os
+from dotenv import load_dotenv
 from translator import message_cetus
 from statusCetus import check_five_min
-from randomChatId import get_random
-import os
-import asyncio
-from vkbottle import Keyboard, Text
-import logging
-
-
-from config import API_token
 from vkbottle.bot import Bot, Message
+
+load_dotenv()
+API_token = os.getenv('API_KEY_SPARLEX')
+
 
 list_of_chats_in_notify = []
 list_of_chats_in_sleep = []
@@ -74,7 +70,7 @@ async def check_status(message: Message):
         await message.answer("Режим рассылки выключен")
 
 
-@bot.loop_wrapper.interval(seconds=120)
+@bot.loop_wrapper.interval(seconds=240)
 async def notifications():
 
     if check_five_min() == 'night':
