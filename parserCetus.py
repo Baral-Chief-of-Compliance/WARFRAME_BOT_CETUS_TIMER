@@ -14,6 +14,8 @@ def get_data_about_cetus():
 
     data_from_wf_hub = json.loads(src)
 
+    data_about_cetus = {}
+
     for key in data_from_wf_hub:
         if (key == "cetusCycle"):
             data_about_cetus = data_from_wf_hub[key]
