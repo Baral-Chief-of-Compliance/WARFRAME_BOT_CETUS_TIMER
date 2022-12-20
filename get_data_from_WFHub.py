@@ -17,4 +17,3 @@ def get_date_from_wfhub():
     src = req.json()
 
     r.set('WFHUB', json.dumps(src))
-
