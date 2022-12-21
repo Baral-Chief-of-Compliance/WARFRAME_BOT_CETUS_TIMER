@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 from translator import message_cetus
 from statusCetus import check_five_min
 from vkbottle.bot import Bot, Message
+from get_data_from_WFHub import get_date_from_wfhub
+
 
 load_dotenv()
 API_token = os.getenv('API_KEY_SPARLEX')
@@ -13,6 +15,11 @@ list_of_chats_in_sleep = []
 
 bot = Bot(token=API_token)
 bot.labeler.vbml_ignore_case = True
+
+
+@bot.loop_wrapper.interval(seconds=60)
+async def redis_cache():
+    await get_date_from_wfhub()
 
 
 @bot.on.message(text="инфо")
