@@ -35,8 +35,3 @@ def get_data_about_arbitration():
             procesed_data['node'] = data_about_arbitration[key]
 
     return procesed_data
-
-# print(get_data_about_cetus())
-
-
-print(get_data_about_arbitration())

@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from translator import message_cetus
 from statusCetus import check_five_min
 from vkbottle.bot import Bot, Message
-from get_data_from_WFHub import get_date_from_wfhub
+from get_arbitration import get_data_about_arbitration
 
 
 load_dotenv()
@@ -17,19 +17,15 @@ bot = Bot(token=API_token)
 bot.labeler.vbml_ignore_case = True
 
 
-@bot.loop_wrapper.interval(seconds=60)
-async def redis_cache():
-    await get_date_from_wfhub()
-
-
 @bot.on.message(text="инфо")
 async def info(message: Message):
     await message.answer( 'Привет, я бот, которого сделал жукич.'
                                                         '\nКак мной пользоваться: '
                                                         '\n1) напишите "рассылка" чтобы настроить самостоятельные уведомления '
                                                         '\n2) напишите "цетус" чтобы узнать время суток на Цетус'
-                                                        '\n3) напишите "ночной режим" чтобы выключить самостоятельные уведомления'
-                                                        '\n4) напишите "статус" чтобы проверить режим самостоятельных уведомлений'
+                                                        '\n3) напишите "арбитраж" чтобы узнать информацию об арбитраже'
+                                                        '\n4) напишите "ночной режим" чтобы выключить самостоятельные уведомления'
+                                                        '\n5) напишите "статус" чтобы проверить режим самостоятельных уведомлений'
     )
 
 
@@ -75,6 +71,18 @@ async def check_status(message: Message):
         await message.answer("Режим рассылки включен")
     else:
         await message.answer("Режим рассылки выключен")
+
+
+@bot.on.message(text='арбитраж')
+async def arbitrage_chek(message: Message):
+    data_arbitration = get_data_about_arbitration()
+
+    await message.answer(
+                        f"Место: {data_arbitration['node']}"
+                        f"\nРежим: {data_arbitration['type']}"
+                        f"\nВраги: {data_arbitration['enemy']}"
+                        f"\nОсталось: {data_arbitration['left_time']} мин"
+    )
 
 
 @bot.loop_wrapper.interval(seconds=240)

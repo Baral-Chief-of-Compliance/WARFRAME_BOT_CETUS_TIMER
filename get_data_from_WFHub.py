@@ -1,8 +1,12 @@
 import requests
 import redis
 import json
+import sched
+import time
+import daemon
 
 
+update_schedule = sched.scheduler(time.time, time.sleep)
 def get_date_from_wfhub():
 
     url = "https://api.warframestat.us/pc?language=ru"
@@ -14,6 +18,20 @@ def get_date_from_wfhub():
     r = redis.Redis(host='localhost', port=6379, db=1)
 
     req = requests.get(url, headers)
-    src = req.json()
 
-    r.set('WFHUB', json.dumps(src))
+    if req.status_code == 200:
+        src = req.json()
+        r.set('WFHUB', json.dumps(src))
+        print('данные занесены в бд')
+
+    else:
+        print('какие-то проблемы')
+
+    update_schedule.enter(180, 1, get_date_from_wfhub)
+
+
+update_schedule.enter(180, 1, get_date_from_wfhub)
+
+
+with daemon.DaemonContext():
+    update_schedule.run()
