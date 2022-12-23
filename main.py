@@ -33,6 +33,7 @@ async def info(message: Message):
 @bot.on.message(text="цетус")
 async def hi_handler(message: Message):
     users_info = await bot.api.users.get(message.from_id)
+    print(chat_db.keys())
     await message.answer(message_cetus())
 
 
@@ -50,7 +51,7 @@ async def add_to_list_of_chats_in_notify(message: Message):
 
     elif not(chat_db.get(group_info)):
         await message.answer("Режим рассылки включен")
-        
+
 
 @bot.on.message(text="ночной режим")
 async def add_to_list_of_chats_in_slee(message: Message):
@@ -72,7 +73,7 @@ async def add_to_list_of_chats_in_slee(message: Message):
 async def check_status(message: Message):
     group_info = message.peer_id
 
-    if group_info in list_of_chats_in_notify:
+    if chat_db.get(group_info) == bytes('on', 'utf-8'):
         await message.answer("Режим рассылки включен")
     else:
         await message.answer("Режим рассылки выключен")
@@ -94,24 +95,40 @@ async def arbitrage_chek(message: Message):
 async def notifications():
 
     if check_five_min() == 'night':
-        for chat in list_of_chats_in_notify:
-            await bot.api.messages.send(peer_id=chat, message="ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ", random_id=0)
+
+        keys = chat_db.keys()
+
+        for k in keys:
+            if chat_db.get(k) == bytes('on', 'utf-8'):
+                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ", random_id=0)
 
     elif check_five_min() == 'day':
-        for chat in list_of_chats_in_notify:
-            await bot.api.messages.send(peer_id=chat, message="Ночь скоро закончится", random_id=0)
+
+        keys = chat_db.keys()
+
+        for k in keys:
+            if chat_db.get(k) == bytes('on', 'utf-8'):
+                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="Ночь скоро закончится", random_id=0)
 
 
 @bot.loop_wrapper.interval(hours=1)
 async def status_notification():
     current_hour = datetime.datetime.now()
     if current_hour.hour == 8:
-        for chat in list_of_chats_in_sleep:
-            await bot.api.messages.send(peer_id=chat, message="Не хотите ли включить рассылку?", random_id=0)
+
+        keys = chat_db.keys()
+
+        for k in keys:
+            if chat_db.get(k) == bytes('off', 'utf-8'):
+                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="Не хотите ли включить рассылку?", random_id=0)
 
     elif current_hour.hour == 23:
-        for chat in list_of_chats_in_notify:
-            await bot.api.messages.send(peer_id=chat, message="Не хотите ли выключить рассылку?", random_id=0)
+
+        keys = chat_db.keys()
+
+        for k in keys:
+            if chat_db.get(k) == bytes('on', 'utf-8'):
+                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="Не хотите ли выключить рассылку?", random_id=0)
 
 
 bot.run_forever()

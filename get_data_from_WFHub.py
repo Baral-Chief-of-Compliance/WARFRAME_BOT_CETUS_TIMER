@@ -27,10 +27,10 @@ def get_date_from_wfhub():
     else:
         print('какие-то проблемы')
 
-    update_schedule.enter(180, 1, get_date_from_wfhub)
+    update_schedule.enter(120, 1, get_date_from_wfhub)
 
 
-update_schedule.enter(180, 1, get_date_from_wfhub)
+update_schedule.enter(120, 1, get_date_from_wfhub)
 
 
 with daemon.DaemonContext():
