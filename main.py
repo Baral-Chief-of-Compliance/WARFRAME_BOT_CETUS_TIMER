@@ -1,4 +1,6 @@
-import datetime, os
+import datetime
+import os
+import redis
 from dotenv import load_dotenv
 from translator import message_cetus
 from statusCetus import check_five_min
@@ -10,8 +12,7 @@ load_dotenv()
 API_token = os.getenv('API_KEY_SPARLEX')
 
 
-list_of_chats_in_notify = []
-list_of_chats_in_sleep = []
+chat_db = redis.Redis(host='localhost', port=6379, db=2)
 
 bot = Bot(token=API_token)
 bot.labeler.vbml_ignore_case = True
@@ -39,27 +40,31 @@ async def hi_handler(message: Message):
 async def add_to_list_of_chats_in_notify(message: Message):
 
     group_info = message.peer_id
-    if group_info in list_of_chats_in_sleep:
-            list_of_chats_in_sleep.remove(group_info)
 
-    if group_info in list_of_chats_in_notify:
-        await message.answer("Режим рассылки у вас уже включен")
-    else:
-        list_of_chats_in_notify.append(group_info)
+    if chat_db.get(group_info) == bytes('off', 'utf-8'):
+        chat_db.set(group_info, 'on')
         await message.answer("Режим рассылки включен")
 
+    elif chat_db.get(group_info) == bytes('on', 'utf-8'):
+        await message.answer("Режим рассылки у вас уже включен")
+
+    elif not(chat_db.get(group_info)):
+        await message.answer("Режим рассылки включен")
+        
 
 @bot.on.message(text="ночной режим")
 async def add_to_list_of_chats_in_slee(message: Message):
 
     group_info = message.peer_id
-    if group_info in list_of_chats_in_notify:
-        list_of_chats_in_notify.remove(group_info)
 
-    if group_info in list_of_chats_in_sleep:
+    if chat_db.get(group_info) == bytes('on', 'utf-8'):
+        chat_db.set(group_info, 'off')
+        await message.answer("Ночной режим включен")
+
+    elif chat_db.get(group_info) == bytes('off', 'utf-8'):
         await message.answer("Ночной режим у вас уже включен")
-    else:
-        list_of_chats_in_sleep.append(group_info)
+
+    elif not(chat_db.get(group_info)):
         await message.answer("Ночной режим включен")
 
 
