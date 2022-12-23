@@ -20,13 +20,6 @@ def check_five_min():
 
                 if (int(time_m) <= 5 and time_str !='h'):
                     return 'night'
-                    # for chat in list_of_chats:
-                    #     vk_session.method('messages.send', {'chat_id': chat, 'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ ("+str(time_m)+" мин)", 'random_id': get_random()})
-
-
-            # elif (len(time_cetus) == 1):
-            #     for chat in list_of_chats:
-            #         vk_session.method('messages.send', {'chat_id': chat,'message': "ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ",'random_id': get_random()})
 
         else:
             time_cetus = info_cetus['timeLeft']
@@ -40,9 +33,3 @@ def check_five_min():
 
                 if (int(time_m) <= 5 and time_str !='h'):
                     return 'day'
-                    # for chat in list_of_chats:
-                    #     vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" минут",'random_id': get_random()})
-
-                # elif (len(time_cetus) == 1):
-                #     for chat in list_of_chats:
-                #         vk_session.method('messages.send', {'chat_id': chat, 'message': "ДО КОНЦА НОЧИ МЕНЬШЕ "+str(time_m)+" МИНУТЫ", 'random_id': get_random()})
