@@ -1,10 +1,11 @@
 from datetime import datetime
 from parserCetus import get_data_about_cetus
 
+
 def check_five_min():
-    print("проверка начала функции")
+
     if ((int(datetime.now().strftime('%M')) % 1) == 0):
-        print("функция проверки работает")
+
         info_cetus = get_data_about_cetus()
 
         if (info_cetus['isDay']):

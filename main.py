@@ -94,7 +94,7 @@ async def arbitrage_chek(message: Message):
     )
 
 
-@bot.loop_wrapper.interval(seconds=240)
+@bot.loop_wrapper.interval(seconds=200)
 async def notifications():
 
     if check_five_min() == 'night':
@@ -103,7 +103,7 @@ async def notifications():
 
         for k in keys:
             if chat_db.get(k) == bytes('on', 'utf-8'):
-                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ", random_id=0)
+                await bot.api.messages.send(peer_id=k.decode('utf-8'), message="ВСЕМ ЕБАТЬ ГЕЙДАЛОНОВ", random_id=0)
 
     elif check_five_min() == 'day':
 
@@ -111,7 +111,7 @@ async def notifications():
 
         for k in keys:
             if chat_db.get(k) == bytes('on', 'utf-8'):
-                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="Ночь скоро закончится", random_id=0)
+                await bot.api.messages.send(peer_id=k.decode('utf-8'), message="Ночь скоро закончится", random_id=0)
 
 
 @bot.loop_wrapper.interval(hours=1)
@@ -123,7 +123,7 @@ async def status_notification():
 
         for k in keys:
             if chat_db.get(k) == bytes('off', 'utf-8'):
-                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="Не хотите ли включить рассылку?", random_id=0)
+                await bot.api.messages.send(peer_id=k.decode('utf-8'), message="Не хотите ли включить рассылку?", random_id=0)
 
     elif current_hour.hour == 23:
 
@@ -131,7 +131,7 @@ async def status_notification():
 
         for k in keys:
             if chat_db.get(k) == bytes('on', 'utf-8'):
-                await bot.api.messages.send(peer_id=bytes(k, 'utf-8'), message="Не хотите ли выключить рассылку?", random_id=0)
+                await bot.api.messages.send(peer_id=k.decode('utf-8'), message="Не хотите ли выключить рассылку?", random_id=0)
 
 
 bot.run_forever()
